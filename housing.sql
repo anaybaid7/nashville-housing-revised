@@ -29,7 +29,6 @@ ADD PropertySplitCity nvarchar(255);
 UPDATE HousingData..NashvilleHousing
 SET PropertySplitCity = split_part(PropertyAddress, ',', 2);
 
-
 ALTER TABLE HousingData..NashvilleHousing
 ADD OwnerSplitAddress nvarchar(255);
 
@@ -58,6 +57,14 @@ SET Bedrooms = CAST(SUBSTRING(Rooms, 1, CHARINDEX('-', Rooms) - 1) AS INT);
 
 UPDATE HousingData..NashvilleHousing
 SET Bathrooms = CAST(SUBSTRING(Rooms, CHARINDEX('-', Rooms) + 1, LEN(Rooms)) AS INT);
+
+-- Change values Y and N in SoldAsVacant to Yes and No respectively
+UPDATE HousingData..NashvilleHousing
+SET SoldAsVacant = 
+    CASE SoldAsVacant
+    WHEN 'Y' THEN 'Yes'
+    WHEN 'N' THEN 'No'
+    END;
 
 -- Adding a new column for the city and state code
 ALTER TABLE HousingData..NashvilleHousing
@@ -130,11 +137,27 @@ SELECT *
 FROM HousingData..NashvilleHousing
 ORDER BY SalePrice DESC;
 
+-- Creating a temporary table to store the data grouped by City and State
+CREATE TEMPORARY TABLE HousingData..CityStateSummary(
+    City nvarchar(255), 
+    State nvarchar(255), 
+    TotalHomes INT, 
+    TotalSalePrice DECIMAL(18,2),
+    AvgPricePerSqft DECIMAL(18,2)
+);
 
--- Change values Y and N in SoldAsVacant to Yes and No respectively
-UPDATE HousingData..NashvilleHousing
-SET SoldAsVacant = 
-    CASE SoldAsVacant
-    WHEN 'Y' THEN 'Yes'
-    WHEN 'N' THEN 'No'
-    END;
+-- Populating the temporary table with data from NashvilleHousing table
+INSERT INTO HousingData..CityStateSummary
+SELECT PropertySplitCity, OwnerSplitState, COUNT(UniqueID), SUM(SalePrice), AVG(PricePerSqft)
+FROM HousingData..NashvilleHousing
+GROUP BY PropertySplitCity, OwnerSplitState;
+
+-- Creating a stored procedure that takes a city and state as input
+-- and returns the data from CityStateSummary table
+CREATE PROCEDURE GetCityStateSummary(@City nvarchar(255), @State nvarchar(255))
+AS
+BEGIN
+    SELECT City, State, TotalHomes, TotalSalePrice, AvgPricePerSqft
+    FROM HousingData..CityStateSummary
+    WHERE City = @City AND State = @State;
+END
