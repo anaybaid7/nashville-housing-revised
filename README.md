@@ -4,13 +4,16 @@ Prerequisites:
 * SQL Server or equivalent database management system
 * Table named 'HousingData..NashvilleHousing' with the necessary columns
 * A primary key defined for table NashvilleHousing
+
 Functionality: 
 The script performs the following operations:
+
 * standardises the format of the "SaleDate" column and adds a new "SalesDate" column
 * populates a "PropertyAddress" column by using the "ParcelID" column
 * breaks up the "PropertyAddress" and "OwnerAddress" columns into multiple columns containing address, city, and state information
 * changes the values in the "SoldAsVacant" column from "Y" and "N" to "Yes" and "No" respectively.
 * Selecting only necessary columns
+
 Additional Features: 
 * Adding a new column for Zipcode and populating it using a cross-reference with a Zipcode table
 * Adding a new column for price per square foot, and calculate it by dividing SalePrice by LivingArea
