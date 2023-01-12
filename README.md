@@ -20,5 +20,5 @@ Additional Features:
 * Adding a new column for building type, it's calculated by a case statement based on LivingArea
 * Adding a new column for the building age and calculating it by using SaleDate and YearBuilt
 * Selecting all columns and ordering them by SalePrice in descending order
-* Please note that the ref_zipcodes, ref_cities and ref_states should exist in your database. Also, make sure to adjust the column names and table names to match your actual database.
+* Please note that the ref_zipcodes, ref_cities and ref_states should exist in the database. Also, column and table names are adjusted to match the actual database.
 
